@@ -1,0 +1,139 @@
+bf <- read.csv("C:\\Users\\aruns\\Desktop\\Fall 2018\\CPSC 375\\Bodyfatproject.csv")
+
+bf <- bf[,2:15]
+
+bf[2] <- log(bf[2])
+bf[3] <- log(bf[3])
+bf[5] <- log(bf[5])
+bf[6] <- log(bf[6],2)
+bf[7] <- log(bf[7],10)
+bf[8] <- log(bf[8],10)
+bf[9] <- log(bf[9])
+bf[10] <- log(bf[10],2)
+bf[11] <- log(bf[11])
+
+
+
+
+m <- lm(bf$bodyfat~bf$Age+bf$Weight+bf$Height
+				+bf$Neck+bf$Chest+bf$Abdomen 
+				+bf$Hip+bf$Thigh+bf$Knee
+				+bf$Ankle+bf$Biceps+bf$Forearm
+				+bf$Wrist,data=bf)
+
+m <- lm(bf$bodyfat~bf$Age+bf$Weight+bf$Height
+				+bf$Chest+bf$Abdomen 
+				+bf$Hip+bf$Thigh
+				+bf$Biceps+bf$Forearm
+				+bf$Wrist,data=bf)
+
+m <- lm(bf[,1]~bf[,2]+bf[,3]+bf[,4]+bf[,5]
+		+bf[,6]+bf[,7]+bf[,8]+bf[,9]
+		+bf[,10]+bf[,11]+bf[,12]
+		+bf[,13]+bf[,14],data=bf)
+
+
+
+
+coeffs <- coef(m)
+
+
+
+
+bodyfatpercentage <- function(Age, Weight, Height, Neck, Chest, Abdomen, Hip, Thigh, Knee, Ankle, Biceps, Forearm, Wrist) {
+return(coeffs[1] + (coeffs[2] * Age) + (coeffs[3] * Weight) + (coeffs[4] * Height) + (coeffs[5] * Neck)
+	+ (coeffs[6] * Chest) + (coeffs[7] * Abdomen) + (coeffs[8] * Hip) + (coeffs[9] * Thigh) + (coeffs[10] * Knee)
+	+ (coeffs[11] * Ankle) + (coeffs[12] * Biceps) + (coeffs[13] * Forearm) + (coeffs[14] * Wrist))
+}
+
+bodyfatpercentage <- function(Age, Weight, Height, Neck, Chest, Abdomen, Hip, Thigh, Knee, Ankle, Biceps, Forearm, Wrist) {
+return(coeffs[1] + (coeffs[2] * Age) + (coeffs[3] * Weight) + (coeffs[4] * Height) + (coeffs[5] * Chest) + (coeffs[6] * Abdomen) 
+	+ (coeffs[7] * Hip) + (coeffs[8] * Thigh) + (coeffs[9] * Biceps))
+}
+
+bodyfatpercentage <- function(Age, Weight, Height, Neck, Chest, Abdomen, Hip, Thigh, Knee, Ankle, Biceps, Forearm, Wrist) {
+return(coeffs[1] + (coeffs[2] * Age) + (coeffs[3] * Weight) + (coeffs[4] * Height)
+	+ (coeffs[5] * Chest) + (coeffs[6] * Abdomen) + (coeffs[7] * Hip) + (coeffs[8] * Thigh)
+	+ (coeffs[9] * Biceps) + (coeffs[10] * Forearm) + (coeffs[11] * Wrist))
+}
+
+
+
+
+bodyfatpercentage(bf[1,2],bf[1,3],bf[1,4],bf[1,5],bf[1,6],bf[1,7],bf[1,8],bf[1,9],bf[1,10],bf[1,11],bf[1,12],bf[1,13],bf[1,14])
+bodyfatpercentage(bf[2,2],bf[2,3],bf[2,4],bf[2,5],bf[2,6],bf[2,7],bf[2,8],bf[2,9],bf[2,10],bf[2,11],bf[2,12],bf[2,13],bf[2,14])
+bodyfatpercentage(bf[3,2],bf[3,3],bf[3,4],bf[3,5],bf[3,6],bf[3,7],bf[3,8],bf[3,9],bf[3,10],bf[3,11],bf[3,12],bf[3,13],bf[3,14])
+bodyfatpercentage(bf[,2],bf[,3],bf[,4],bf[,5],bf[,6],bf[,7],bf[,8],bf[,9],bf[,10],bf[,11],bf[,12],bf[,13],bf[,14])
+bodyfatpercentage(bf[,2],bf[,3],bf[,4],bf[,5],bf[,6],bf[,7],bf[,8],bf[,9],bf[,10],bf[,11],bf[,12],bf[,13],bf[,14])
+bodyfatpercentage(bf[,2],bf[,3],bf[,4],bf[,5],bf[,6],bf[,7],bf[,8],bf[,9],bf[,10],bf[,11],bf[,12],bf[,13],bf[,14])
+
+
+
+#histograms
+
+hist(bf$Age)
+hist(bf$Weight)
+hist(bf$Height)
+hist(bf$Neck)
+hist(bf$Chest)
+hist(bf$Abdomen)
+hist(bf$Hip)
+hist(bf$Thigh)
+hist(bf$Knee)
+hist(bf$Ankle)
+hist(bf$Biceps)
+hist(bf$Forearm)
+hist(bf$Wrist)
+
+
+#plots
+
+plot(bf$Age,bf$bodyfat)
+plot(bf$Weight,bf$bodyfat)
+plot(bf$Height,bf$bodyfat)
+plot(bf$Neck,bf$bodyfat)
+plot(bf$Chest,bf$bodyfat)
+plot(bf$Abdomen,bf$bodyfat)
+plot(bf$Hip,bf$bodyfat)
+plot(bf$Thigh,bf$bodyfat)
+plot(bf$Knee,bf$bodyfat)
+plot(bf$Ankle,bf$bodyfat)
+plot(bf$Biceps,bf$bodyfat)
+plot(bf$Forearm,bf$bodyfat)
+plot(bf$Wrist,bf$bodyfat)
+
+
+
+#k-folds check
+
+rdata <- bf[sample(nrow(bf)),]
+
+folds <- cut(seq(1,nrow(rdata)),breaks=10,labels=FALSE)
+
+mse <- c(10)
+
+for(i in 1:10) {
+
+	testIndexes <- which(folds==i,arr.ind=TRUE)
+	testData <- rdata[testIndexes,]
+	trainData <- rdata[-testIndexes,]
+
+	m <- lm(trainData$bodyfat~trainData$Age+trainData$Weight+trainData$Height
+			+trainData$Neck+trainData$Chest+trainData$Abdomen
+			+trainData$Hip+trainData$Thigh+trainData$Knee
+			+trainData$Ankle+trainData$Biceps+trainData$Forearm
+			+trainData$Wrist,data=testData)
+
+	coeffs <- coef(m)
+	sse <- 0
+
+	for(j in 1:nrow(testData)) {
+	bfp <- bodyfatpercentage(testData[j,2],testData[j,3],testData[j,4],testData[j,5],testData[j,6],testData[j,7]
+		,testData[j,8],testData[j,9],testData[j,10],testData[j,11],testData[j,12],testData[j,13],testData[j,14])
+
+	sse <- sse + (bfp-testData[j,1])^2
+	}
+
+	mse[i] <- sse / (nrow(testData) - 14)
+}
+
